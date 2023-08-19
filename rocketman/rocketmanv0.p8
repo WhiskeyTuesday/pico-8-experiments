@@ -7,29 +7,33 @@ rot = 0
 spr0 = 1
 
 pos = { 58, 64 }
-grv = { 0, 0 }
+grv = { 0, 0.2 }
 acc = { 0, 0 }
 vel = { 0, 0 }
 
 function _update()
 	if btn(⬆️) then
 	 spr0=17
-	 vel[2] = max(vel[2] - 0.25, -3)
-	 acc[2] = -0.25
+	 acc[2] = -0.33
 	 sfx(0)
 	elseif btn(⬇️) then
 	 spr0=33
-	 vel[2] = min(vel[2] + 0.225, 5)
   acc[2] = 0.225	
 	 sfx(0)
 	else
-	 vel[2] = min(vel[2] + 0.2, 2)
-	 acc[2] = 0.2
+		acc[2] = 0
 	 spr0=1
 	 sfx(-1)
 	end
-	vel[2] = vel[2] + acc[2]
-	pos[2] = min(pos[2] + vel[2], 100)
+
+ vel[2] = vel[2] + acc[2]
+ vel[2] = vel[2] + grv[2]
+ if vel[2] > 0 then
+  if pos[2] == 100 then
+   vel[2] = 0
+  end
+ end
+ pos[2] = min(pos[2] + vel[2], 100)
 end
 
 function _draw()
@@ -39,14 +43,15 @@ function _draw()
 	spr(spr0+2, pos[1], pos[2]+8)
 	spr(spr0+3, pos[1]+8, pos[2]+8)
 
-	if debug then
-		print(
-		 "p:"..pos[1].." "..pos[2],
-		 0, 0, 8
-		)
-		print("v:"..vel[1].." "..vel[2])
-		print("a:"..acc[1].." "..acc[2])
-	end
+ if debug then
+  print(
+   "p:"..pos[1].." "..pos[2],
+   0, 0, 8
+  )
+  print("v:"..vel[1].." "..vel[2])
+  print("a:"..acc[1].." "..acc[2])
+  print("g:"..grv[2])
+ end
 end
 __gfx__
 00000000000000055000000000006677776600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
