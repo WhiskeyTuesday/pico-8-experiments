@@ -4,13 +4,6 @@ __lua__
 debug = true
 
 rot = 0
-
-xp = 58
-yp = 64
-
-xa = 0
-ya = 0
-
 spr0 = 1
 
 pos = { 58, 64 }
@@ -21,35 +14,38 @@ vel = { 0, 0 }
 function _update()
 	if btn(⬆️) then
 	 spr0=17
-	 ya = max(ya - 0.25, -3)
+	 vel[2] = max(vel[2] - 0.25, -3)
+	 acc[2] = -0.25
 	 sfx(0)
 	elseif btn(⬇️) then
 	 spr0=33
-	 ya = min(ya + 0.225, 5)
+	 vel[2] = min(vel[2] + 0.225, 5)
+  acc[2] = 0.225	
 	 sfx(0)
 	else
-	 ya= min(ya + 0.2, 2)
+	 vel[2] = min(vel[2] + 0.2, 2)
+	 acc[2] = 0.2
 	 spr0=1
 	 sfx(-1)
 	end
-	yp = min(yp+ya, 100)
+	vel[2] = vel[2] + acc[2]
+	pos[2] = min(pos[2] + vel[2], 100)
 end
 
 function _draw()
  cls(1)
- spr(spr0, xp, yp)
-	spr(spr0+1, xp+8,yp)
-	spr(spr0+2, xp, yp+8)
-	spr(spr0+3, xp+8, yp+8)
+ spr(spr0, pos[1], pos[2])
+	spr(spr0+1, pos[1]+8,pos[2])
+	spr(spr0+2, pos[1], pos[2]+8)
+	spr(spr0+3, pos[1]+8, pos[2]+8)
 
 	if debug then
-		print(xa, 0, 0, 8)
-		print(ya)
-		print(xp)
-		print(yp)
-		print(pos[1].." "..pos[2])
-		print(vel[1].." "..vel[2])
-		print(acc[1].." "..acc[2])
+		print(
+		 "p:"..pos[1].." "..pos[2],
+		 0, 0, 8
+		)
+		print("v:"..vel[1].." "..vel[2])
+		print("a:"..acc[1].." "..acc[2])
 	end
 end
 __gfx__
