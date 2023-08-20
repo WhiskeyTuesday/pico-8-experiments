@@ -1,43 +1,71 @@
 pico-8 cartridge // http://www.pico-8.com
 version 41
 __lua__
+--next things to try
+---add rotation
+---add thrust curves
+----for both nozzles
+---add actual game mechanics
+----imagine that!
+---draw the rocket blasts with
+----code rather than sprites
+----proportionally to thrust?
+---fuel limits?
+
 debug = true
 
-rot = 0
-spr0 = 1
+rot = 0 --rotation
+spr0 = 1 --sprite zero (first)
 
-pos = { 58, 64 }
-grv = { 0, 0.2 }
-acc = { 0, 0 }
-vel = { 0, 0 }
+pos = { 58, 100 } --position
+grv = { 0, 0.1 } --gravity
+acc = { 0, 0 } --acceleration
+vel = { 0, 0 } --velocity
 
-function _update()
+function _update60()
 	if btn(⬆️) then
-	 spr0=17
-	 acc[2] = -0.33
+	 spr0 = 17
+	 acc[2] = -0.166
 	 sfx(0)
 	elseif btn(⬇️) then
-	 spr0=33
-  acc[2] = 0.225	
+	 spr0 = 33
+  acc[2] = 0.1125
 	 sfx(0)
 	else
 		acc[2] = 0
-	 spr0=1
+	 spr0 = 1
 	 sfx(-1)
 	end
 
+ --add rocket accel and
+ --gravity to velocity vector
  vel[2] = vel[2] + acc[2]
  vel[2] = vel[2] + grv[2]
+
+ --if headed downward and at
+ --floor level stop dead at
  if vel[2] > 0 then
   if pos[2] == 100 then
+   --record max landing speed
+   vl = max(vl, vel[2])
    vel[2] = 0
   end
  end
- pos[2] = min(pos[2] + vel[2], 100)
+ --don't go below the floor.
+ --runs on every downward
+ --update. if perf mattered
+ --more than tokens i would
+ --only do this between y=99
+ --and y=101 (or something)
+ pos[2] = min(
+  pos[2] + vel[2],
+  100
+ )
 end
 
 function _draw()
  cls(1)
+ rectfill(0, 116, 127, 127, 15)
  spr(spr0, pos[1], pos[2])
 	spr(spr0+1, pos[1]+8,pos[2])
 	spr(spr0+2, pos[1], pos[2]+8)
@@ -46,11 +74,12 @@ function _draw()
  if debug then
   print(
    "p:"..pos[1].." "..pos[2],
-   0, 0, 8
+   0, 0, 8 -- makes prints red
   )
   print("v:"..vel[1].." "..vel[2])
   print("a:"..acc[1].." "..acc[2])
   print("g:"..grv[2])
+  print(vl)
  end
 end
 __gfx__
